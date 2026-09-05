@@ -62,7 +62,7 @@ Each team member is committed to completing the following granular tasks through
 12. Review, approve, and merge Pull Requests from developers into `develop`.
 13. Finalize `README.md` with compilation and execution instructions.
 
-### 📦 Developer 1 Activities ([Nombre Desarrollador 1])
+### 📦 Developer 1 Activities ([Samuel Angulo Meza])
 1. Create and switch to the `feature/product-module` branch.
 2. Implement the abstract base class `Product` with common fields, constructor, and methods.
 3. Declare the abstract method `getDescription()` in `Product`.
@@ -73,7 +73,7 @@ Each team member is committed to completing the following granular tasks through
 8. Write comprehensive JavaDoc documentation in English for all module classes.
 9. Open Pull Requests targeting `develop` for Tech Lead review.
 
-### 👥 Developer 2 Activities ([Nombre Desarrollador 2])
+### 👥 Developer 2 Activities ([Kevin Santiago Amariz Sanchez])
 1. Create and switch to the `feature/person-module` branch.
 2. Implement the abstract base class `Person` with common fields, constructor, and methods.
 3. Declare the abstract/business methods in `Person`.
