@@ -8,6 +8,7 @@ package Persistence;
  *
  * @author Samuel Angulo
  */
+import Model.Accessory;
 import Model.Console;
 import Model.Game;
 import Model.Product;
@@ -23,8 +24,9 @@ import java.util.List;
 
 /**
  * Repository class handling persistence operations for Product entities.
- * Manages reading and writing product records to plain text files in the data directory.
- * 
+ * Manages reading and writing product records to plain text files in the data
+ * directory.
+ *
  * @author Samuel Angulo
  * @version 1.0
  */
@@ -56,7 +58,12 @@ public class ProductRepository {
 
     /**
      * Saves a list of products to the text file, overwriting existing contents.
-     * 
+     *
+     * @param products List of Product instances to persist
+     */
+    /**
+     * Saves a list of products to the text file, overwriting existing contents.
+     *
      * @param products List of Product instances to persist
      */
     public void saveAll(List<Product> products) {
@@ -72,6 +79,11 @@ public class ProductRepository {
                     writer.write(String.format("CONSOLE;%s;%s;%.2f;%d;%s;%s%n",
                             console.getId(), console.getTitle(), console.getPrice(),
                             console.getStock(), console.getBrand(), console.getStorageCapacity()));
+                } else if (product instanceof Accessory) {
+                    Accessory accessory = (Accessory) product;
+                    writer.write(String.format("ACCESSORY;%s;%s;%.2f;%d;%s;%s%n",
+                            accessory.getId(), accessory.getTitle(), accessory.getPrice(),
+                            accessory.getStock(), accessory.getType(), accessory.getCompatibility()));
                 }
             }
         } catch (IOException e) {
@@ -81,7 +93,7 @@ public class ProductRepository {
 
     /**
      * Reads and parses all products from the text file.
-     * 
+     *
      * @return List of persisted Product instances
      */
     public List<Product> findAll() {
@@ -95,31 +107,25 @@ public class ProductRepository {
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                if (line.trim().isEmpty()) continue;
-                
+                if (line.trim().isEmpty()) {
+                    continue;
+                }
+
+                // Dentro del bucle while/readLine del método findAll() en ProductRepository.java:
                 String[] parts = line.split(";");
                 String type = parts[0];
 
-                if ("GAME".equalsIgnoreCase(type) && parts.length == 7) {
-                    Game game = new Game(
-                            parts[1],
-                            parts[2],
-                            Double.parseDouble(parts[3].replace(',', '.')),
-                            Integer.parseInt(parts[4]),
-                            parts[5],
-                            parts[6]
-                    );
-                    products.add(game);
-                } else if ("CONSOLE".equalsIgnoreCase(type) && parts.length == 7) {
-                    Console console = new Console(
-                            parts[1],
-                            parts[2],
-                            Double.parseDouble(parts[3].replace(',', '.')),
-                            Integer.parseInt(parts[4]),
-                            parts[5],
-                            parts[6]
-                    );
-                    products.add(console);
+                if (type.equalsIgnoreCase("GAME")) {
+                    products.add(new Game(parts[1], parts[2], Double.parseDouble(parts[3].replace(",", ".")),
+                            Integer.parseInt(parts[4]), parts[5], parts[6]));
+
+                } else if (type.equalsIgnoreCase("CONSOLE")) {
+                    products.add(new Console(parts[1], parts[2], Double.parseDouble(parts[3].replace(",", ".")),
+                            Integer.parseInt(parts[4]), parts[5], parts[6]));
+
+                } else if (type.equalsIgnoreCase("ACCESSORY")) {
+                    products.add(new Accessory(parts[1], parts[2], Double.parseDouble(parts[3].replace(",", ".")),
+                            Integer.parseInt(parts[4]), parts[5], parts[6]));
                 }
             }
         } catch (IOException | NumberFormatException e) {
