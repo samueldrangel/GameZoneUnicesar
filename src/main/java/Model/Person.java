@@ -4,7 +4,7 @@ package Model;
  * Abstract base class representing a generic person in the GameZone system.
  * Serves as the parent class for specific user roles like Customer and Admin.
  * 
- * @author Developer 2
+ * @author Kevin Santiago Amaris Sánchez
  * @version 1.0
  */
 

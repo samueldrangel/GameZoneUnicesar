@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 * Service class that manages business logic operations for Person entities.
 * Handles registration, lookup, and filtering for Customers and Sellers.
 * 
-* @author Developer 2
+* @author Kevin Santiago Amaris Sánchez
 * @version 1.0
 */
 

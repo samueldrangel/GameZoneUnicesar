@@ -8,7 +8,7 @@ package Model;
 * Concrete subclass representing a Customer in the GameZone system.
 * Extends Person by adding loyalty points and customer categorization.
 * 
-* @author Developer 2
+* @author Kevin Santiago Amaris Sánchez
 * @version 1.0
 */
 public class Customer extends Person {

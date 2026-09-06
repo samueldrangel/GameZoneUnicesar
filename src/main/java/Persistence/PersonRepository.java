@@ -17,7 +17,7 @@ import java.util.List;
 * Handles read and write operations for Person entities using flat text file storage.
 * Supports persistence for both Customer and Seller concrete subclasses.
 * 
-* @author Developer 2
+* @author Kevin Santiago Amaris Sánchez
 * @version 1.0
 */
 public class PersonRepository {

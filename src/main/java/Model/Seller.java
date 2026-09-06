@@ -8,7 +8,7 @@ package Model;
 * Concrete subclass representing a Seller (Employee) in the GameZone system.
 * Extends Person by adding employment details, compensation, and store roles.
 * 
-* @author Developer 2
+* @author Kevin Santiago Amaris Sánchez
 * @version 1.0
 */
 
