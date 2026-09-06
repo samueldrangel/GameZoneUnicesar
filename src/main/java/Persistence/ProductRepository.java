@@ -6,7 +6,7 @@ package Persistence;
 
 /**
  *
- * @author Samuel
+ * @author Samuel Angulo
  */
 import Model.Console;
 import Model.Game;
@@ -25,7 +25,7 @@ import java.util.List;
  * Repository class handling persistence operations for Product entities.
  * Manages reading and writing product records to plain text files in the data directory.
  * 
- * @author Samuel Rangel
+ * @author Samuel Angulo
  * @version 1.0
  */
 public class ProductRepository {

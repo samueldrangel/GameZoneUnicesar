@@ -6,7 +6,7 @@ package Service;
 
 /**
  *
- * @author Samuel
+ * @author Samuel Angulo
  */
 import Model.Product;
 import Persistence.ProductRepository;
@@ -19,7 +19,7 @@ import java.util.Optional;
  * Service class that manages business logic operations for Product entities.
  * Coordinates data operations between the UI and the persistence layer.
  * 
- * @author Samuel Rangel
+ * @author Samuel Angulo
  * @version 1.0
  */
 public class ProductService {

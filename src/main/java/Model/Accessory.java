@@ -6,13 +6,13 @@ package Model;
 
 /**
  *
- * @author Samuel
+ * @author Samuel Angulo
  */
 /**
  * Represents an accessory product in the GameZone store.
  * Extends the abstract base class Product.
  * 
- * @author Samuel Rangel
+ * @author Samuel Angulo
  * @version 1.0
  */
 public class Accessory extends Product {

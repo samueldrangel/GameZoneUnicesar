@@ -6,7 +6,7 @@ package Model;
 
 /**
  *
- * @author Samuel
+ * @author Samuel Angulo
  */
 public abstract class Product {
 

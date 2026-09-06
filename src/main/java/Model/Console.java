@@ -6,13 +6,13 @@ package Model;
 
 /**
  *
- * @author Samuel
+ * @author Samuel Angulo
  */
 /**
  * Represents a gaming console product in the GameZone store.
  * Extends the abstract base class Product.
  * 
- * @author Samuel Rangel
+ * @author Samuel Angulo
  * @version 1.0
  */
 public class Console extends Product {
