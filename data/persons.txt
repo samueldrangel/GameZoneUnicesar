@@ -1,0 +1,6 @@
+CUSTOMER;C001;Juan Perez;juan@gmail.com;3001234567;VIP;150
+CUSTOMER;C002;Ana Martinez;ana.martinez@gmail.com;3112345678;Regular;40
+CUSTOMER;C003;Carlos Rodriguez;carlos.r@gmail.com;3203456789;VIP;300
+CUSTOMER;C004;Laura Gomez;laura.g@gmail.com;3014567890;Regular;10
+SELLER;S001;Maria Gomez;maria@gamezone.com;3109876543;EMP01;1200.0;Sales Rep;2024-01-15
+SELLER;S002;David Lopez;david@gamezone.com;3158765432;EMP02;1350.0;Store Supervisor;2023-06-01

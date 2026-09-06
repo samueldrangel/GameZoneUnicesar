@@ -1,0 +1,10 @@
+GAME;P001;The Legend of Zelda;59,99;10;Nintendo Switch;Action
+GAME;P002;God of War Ragnarok;69,99;8;PlayStation 5;Action
+GAME;P003;Halo Infinite;49,99;12;Xbox Series X;FPS
+GAME;P004;Elden Ring;59,99;15;PC;RPG
+CONSOLE;P005;PlayStation 5 Console;499,99;5;Sony;825GB SSD
+CONSOLE;P006;Xbox Series X;499,99;4;Microsoft;1TB SSD
+CONSOLE;P007;Nintendo Switch OLED;349,99;7;Nintendo;64GB
+ACCESSORY;P008;DualSense Controller;69,99;20;Controller;PS5
+ACCESSORY;P009;Xbox Headset;99,99;10;Headset;Xbox/PC
+ACCESSORY;P010;Switch Pro Controller;69,99;14;Controller;Switch
