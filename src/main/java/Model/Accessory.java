@@ -15,7 +15,7 @@ package Model;
  * @author Samuel Angulo
  * @version 1.0
  */
-public class Accessory extends Product {
+public abstract class Accessory extends Product {
     private String type;
     private String compatibility;
 
