@@ -1,3 +1,4 @@
+```mermaid
 classDiagram
 
 &#x20;   direction TB
