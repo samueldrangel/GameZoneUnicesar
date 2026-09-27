@@ -8,9 +8,13 @@ package Persistence;
  *
  * @author Samuel Angulo
  */
-import Model.Accessory;
+
+
+import Model.Cable;
 import Model.Console;
+import Model.Controller;
 import Model.Game;
+import Model.Memory;
 import Model.Product;
 
 import java.io.BufferedReader;
@@ -26,8 +30,7 @@ import java.util.List;
  * Repository class handling persistence operations for Product entities.
  * Manages reading and writing product records to plain text files in the data
  * directory.
- *
- * @author Samuel Angulo
+
  * @version 1.0
  */
 public class ProductRepository {
@@ -37,10 +40,7 @@ public class ProductRepository {
     public ProductRepository() {
         ensureFileExists();
     }
-
-    /**
-     * Ensures that the data directory and products.txt file exist.
-     */
+    
     private void ensureFileExists() {
         try {
             File file = new File(filePath);
@@ -56,16 +56,6 @@ public class ProductRepository {
         }
     }
 
-    /**
-     * Saves a list of products to the text file, overwriting existing contents.
-     *
-     * @param products List of Product instances to persist
-     */
-    /**
-     * Saves a list of products to the text file, overwriting existing contents.
-     *
-     * @param products List of Product instances to persist
-     */
     public void saveAll(List<Product> products) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
             for (Product product : products) {
@@ -79,11 +69,24 @@ public class ProductRepository {
                     writer.write(String.format("CONSOLE;%s;%s;%.2f;%d;%s;%s%n",
                             console.getId(), console.getTitle(), console.getPrice(),
                             console.getStock(), console.getBrand(), console.getStorageCapacity()));
-                } else if (product instanceof Accessory) {
-                    Accessory accessory = (Accessory) product;
-                    writer.write(String.format("ACCESSORY;%s;%s;%.2f;%d;%s;%s%n",
-                            accessory.getId(), accessory.getTitle(), accessory.getPrice(),
-                            accessory.getStock(), accessory.getType(), accessory.getCompatibility()));
+                } else if (product instanceof Controller) {
+                    Controller controller = (Controller) product;
+                    writer.write(String.format("CONTROLLER;%s;%s;%.2f;%d;%s;%s;%s%n",
+                            controller.getId(), controller.getTitle(), controller.getPrice(),
+                            controller.getStock(), controller.getType(), controller.getCompatibility(),
+                            controller.getConnectionType()));
+                } else if (product instanceof Cable) {
+                    Cable cable = (Cable) product;
+                    writer.write(String.format("CABLE;%s;%s;%.2f;%d;%s;%s;%.2f;%s%n",
+                            cable.getId(), cable.getTitle(), cable.getPrice(),
+                            cable.getStock(), cable.getType(), cable.getCompatibility(),
+                            cable.getLength(), cable.getConnectorType()));
+                } else if (product instanceof Memory) {
+                    Memory memory = (Memory) product;
+                    writer.write(String.format("MEMORY;%s;%s;%.2f;%d;%s;%s;%d;%s%n",
+                            memory.getId(), memory.getTitle(), memory.getPrice(),
+                            memory.getStock(), memory.getType(), memory.getCompatibility(),
+                            memory.getCapacityGb(), memory.getMemoryType()));
                 }
             }
         } catch (IOException e) {
@@ -91,11 +94,6 @@ public class ProductRepository {
         }
     }
 
-    /**
-     * Reads and parses all products from the text file.
-     *
-     * @return List of persisted Product instances
-     */
     public List<Product> findAll() {
         List<Product> products = new ArrayList<>();
         File file = new File(filePath);
@@ -111,7 +109,6 @@ public class ProductRepository {
                     continue;
                 }
 
-                // Dentro del bucle while/readLine del método findAll() en ProductRepository.java:
                 String[] parts = line.split(";");
                 String type = parts[0];
 
@@ -123,9 +120,17 @@ public class ProductRepository {
                     products.add(new Console(parts[1], parts[2], Double.parseDouble(parts[3].replace(",", ".")),
                             Integer.parseInt(parts[4]), parts[5], parts[6]));
 
-                } else if (type.equalsIgnoreCase("ACCESSORY")) {
-                    products.add(new Accessory(parts[1], parts[2], Double.parseDouble(parts[3].replace(",", ".")),
-                            Integer.parseInt(parts[4]), parts[5], parts[6]));
+                } else if (type.equalsIgnoreCase("CONTROLLER")) {
+                    products.add(new Controller(parts[1], parts[2], Double.parseDouble(parts[3].replace(",", ".")),
+                            Integer.parseInt(parts[4]), parts[5], parts[6], parts[7]));
+
+                } else if (type.equalsIgnoreCase("CABLE")) {
+                    products.add(new Cable(parts[1], parts[2], Double.parseDouble(parts[3].replace(",", ".")),
+                            Integer.parseInt(parts[4]), parts[5], parts[6], Double.parseDouble(parts[7].replace(",", ".")), parts[8]));
+
+                } else if (type.equalsIgnoreCase("MEMORY")) {
+                    products.add(new Memory(parts[1], parts[2], Double.parseDouble(parts[3].replace(",", ".")),
+                            Integer.parseInt(parts[4]), parts[5], parts[6], Integer.parseInt(parts[7]), parts[8]));
                 }
             }
         } catch (IOException | NumberFormatException e) {
