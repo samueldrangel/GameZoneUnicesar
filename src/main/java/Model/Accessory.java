@@ -5,11 +5,7 @@
 package Model;
 
 /**
- *
- * @author Samuel Angulo
- */
-/**
- * Represents an accessory product in the GameZone store.
+ * Represents an abstract accessory product in the GameZone store.
  * Extends the abstract base class Product.
  * 
  * @author Samuel Angulo
