@@ -8,7 +8,7 @@ package Model;
  * Represents an abstract accessory product in the GameZone store.
  * Extends the abstract base class Product.
  * 
- * @author Samuel Angulo
+ * @author Samuel Angulo Meza
  * @version 1.0
  */
 public abstract class Accessory extends Product {
