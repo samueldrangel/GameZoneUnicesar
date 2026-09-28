@@ -4,40 +4,43 @@
 
 package com.mycompany.gamezoneunicesar;
 
-/**
- *
- * @author PC
- */
-
-import Model.Accessory;
+// Si AccessoryRepository.java no tiene declaración de paquete, se importa directamente o se usa si está en el mismo paquete raíz
 import Model.Console;
 import Model.Customer;
 import Model.Game;
 import Model.Seller;
+import Service.AccessoryService;
 import Service.PersonService;
 import Service.ProductService;
-import Service.SalesService;
+import Service.SaleService; // Corregido con 's'
 import UI.ConsoleMenu;
+import persistence.AccessoryRepository;
 
 /**
  * Main application entry point for GameZoneUnicesar system.
  * Handles initial data seeding, dependency injection, and UI startup.
  * 
  * @author Lead Developer
- * @version 1.0
+ * @version 1.1
  */
 public class GameZoneUnicesar {
 
     public static void main(String[] args) {
         System.out.println("Initializing GameZone Unicesar System...");
 
-        // 1. Dependency Injection: Initialize Service Layer
+        // 1. Dependency Injection: Initialize Persistence & Service Layers
         ProductService productService = new ProductService();
         PersonService personService = new PersonService();
-        SalesService salesService = new SalesService(productService);
+        
+        // Inicializar el repositorio y servicio de accesorios
+        AccessoryRepository accessoryRepository = new AccessoryRepository();
+        AccessoryService accessoryService = new AccessoryService(accessoryRepository);
+        
+        
+        SaleService saleService = new SaleService(productService);
 
         // 2. Data Seeding: Populate default items if catalog/users are empty
-        seedInitialData(productService, personService);
+        seedInitialData(productService, personService, accessoryService);
 
         // 3. Inject Services into UI and Start Application
         ConsoleMenu consoleMenu = new ConsoleMenu(productService, personService, salesService);
@@ -45,15 +48,10 @@ public class GameZoneUnicesar {
     }
 
     /**
-     * Seeds initial products, customers, and sellers if repositories are empty.
+     * Seeds initial products, accessories, customers, and sellers if repositories are empty.
      */
-    /**
-     * Seeds initial products, customers, and sellers if repositories are empty.
-     */
-    /**
-     * Seeds initial products, customers, and sellers if repositories are empty.
-     */
-    private static void seedInitialData(ProductService productService, PersonService personService) {
+    private static void seedInitialData(ProductService productService, PersonService personService, AccessoryService accessoryService) {
+        // Carga de productos regulares (Juegos y Consolas)
         if (productService.getAllProducts().isEmpty()) {
             // Games (id, title, price, stock, platform, genre)
             productService.addProduct(new Game("P001", "The Legend of Zelda", 59.99, 10, "Nintendo Switch", "Action"));
@@ -65,13 +63,16 @@ public class GameZoneUnicesar {
             productService.addProduct(new Console("P005", "PlayStation 5 Console", 499.99, 5, "Sony", "825GB SSD"));
             productService.addProduct(new Console("P006", "Xbox Series X", 499.99, 4, "Microsoft", "1TB SSD"));
             productService.addProduct(new Console("P007", "Nintendo Switch OLED", 349.99, 7, "Nintendo", "64GB"));
-
-            // Accessories (id, title, price, stock, type, compatibility)
-            productService.addProduct(new Accessory("P008", "DualSense Controller", 69.99, 20, "Controller", "PS5"));
-            productService.addProduct(new Accessory("P009", "Xbox Headset", 99.99, 10, "Headset", "Xbox/PC"));
-            productService.addProduct(new Accessory("P010", "Switch Pro Controller", 69.99, 14, "Controller", "Switch"));
         }
 
+        // Carga de Accesorios
+        if (accessoryService.listAllAccessories().isEmpty()) {
+            accessoryService.registerController("A001", "DualSense Controller", 69.99, 20, "Controller", "PS5", "Wireless");
+            accessoryService.registerCable("A002", "HDMI 2.1 Cable", 19.99, 30, "Cable", "PS5/Xbox/PC", 2.0, "HDMI");
+            accessoryService.registerMemory("A003", "Expansion Card 1TB", 149.99, 10, "Memory", "Xbox Series X", 1024, "NVMe SSD");
+        }
+
+        // Carga de Personas (Clientes y Vendedores)
         if (personService.getAllPersons().isEmpty()) {
             // Customers
             personService.registerPerson(new Customer("C001", "Juan Perez", "juan@gmail.com", "3001234567", "VIP", 150));
