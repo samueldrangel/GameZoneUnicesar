@@ -128,4 +128,21 @@ public class Return {
     public double getRefundedAmount() {
         return refundedAmount;
     }
+    /**
+     * Checks if a specific product is contained within this return.
+     *
+     * @param productId Unique identifier of the product to check
+     * @return true if the product is part of the return, false otherwise
+     */
+    public boolean containsProduct(String productId) {
+        if (productId == null || returnedProducts == null) {
+            return false;
+        }
+        for (Product product : returnedProducts) {
+            if (product != null && productId.equalsIgnoreCase(product.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
