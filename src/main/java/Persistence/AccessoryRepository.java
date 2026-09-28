@@ -23,7 +23,8 @@ public class AccessoryRepository {
     private final String filePath;
 
     /**
-     * Constructs an AccessoryRepository with default file path "data/accessories.csv".
+     * Constructs an AccessoryRepository with default file path
+     * "data/accessories.csv".
      */
     public AccessoryRepository() {
         this.filePath = "data/accessories.csv";
@@ -66,7 +67,8 @@ public class AccessoryRepository {
     /**
      * Loads all accessories from the CSV file.
      *
-     * @return List of retrieved Accessory objects, or empty list if file does not exist.
+     * @return List of retrieved Accessory objects, or empty list if file does
+     * not exist.
      */
     public List<Accessory> loadAll() {
         List<Accessory> accessories = new ArrayList<>();
@@ -100,35 +102,40 @@ public class AccessoryRepository {
     private String serializeAccessory(Accessory accessory) {
         if (accessory instanceof Controller) {
             Controller controller = (Controller) accessory;
-            return String.format("CONTROLLER,%s,%s,%.2f,%d,%s,%s,%s",
+            return String.join(",",
+                    "CONTROLLER",
                     controller.getId(),
                     controller.getTitle(),
-                    controller.getPrice(),
-                    controller.getStock(),
+                    String.valueOf(controller.getPrice()),
+                    String.valueOf(controller.getStock()),
                     controller.getType(),
                     controller.getCompatibility(),
                     controller.getConnectionType());
+
         } else if (accessory instanceof Cable) {
             Cable cable = (Cable) accessory;
-            return String.format("CABLE,%s,%s,%.2f,%d,%s,%s,%.2f,%s",
+            return String.join(",",
+                    "CABLE",
                     cable.getId(),
                     cable.getTitle(),
-                    cable.getPrice(),
-                    cable.getStock(),
+                    String.valueOf(cable.getPrice()),
+                    String.valueOf(cable.getStock()),
                     cable.getType(),
                     cable.getCompatibility(),
-                    cable.getLength(),
+                    String.valueOf(cable.getLength()),
                     cable.getConnectorType());
+
         } else if (accessory instanceof Memory) {
             Memory memory = (Memory) accessory;
-            return String.format("MEMORY,%s,%s,%.2f,%d,%s,%s,%d,%s",
+            return String.join(",",
+                    "MEMORY",
                     memory.getId(),
                     memory.getTitle(),
-                    memory.getPrice(),
-                    memory.getStock(),
+                    String.valueOf(memory.getPrice()),
+                    String.valueOf(memory.getStock()),
                     memory.getType(),
                     memory.getCompatibility(),
-                    memory.getCapacityGb(),
+                    String.valueOf(memory.getCapacityGb()),
                     memory.getMemoryType());
         }
 
@@ -154,18 +161,24 @@ public class AccessoryRepository {
 
         switch (classDiscriminator.toUpperCase()) {
             case "CONTROLLER":
-                if (parts.length < 8) return null;
+                if (parts.length < 8) {
+                    return null;
+                }
                 String connectionType = parts[7];
                 return new Controller(id, title, price, stock, type, compatibility, connectionType);
 
             case "CABLE":
-                if (parts.length < 9) return null;
+                if (parts.length < 9) {
+                    return null;
+                }
                 double length = Double.parseDouble(parts[7]);
                 String connectorType = parts[8];
                 return new Cable(id, title, price, stock, type, compatibility, length, connectorType);
 
             case "MEMORY":
-                if (parts.length < 9) return null;
+                if (parts.length < 9) {
+                    return null;
+                }
                 int capacityGb = Integer.parseInt(parts[7]);
                 String memoryType = parts[8];
                 return new Memory(id, title, price, stock, type, compatibility, capacityGb, memoryType);

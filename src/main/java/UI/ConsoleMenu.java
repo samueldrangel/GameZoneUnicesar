@@ -4,78 +4,105 @@
  */
 package UI;
 
-import java.util.List;
 import java.util.Scanner;
-import Model.Accessory;
 import Service.AccessoryService;
+import Service.PersonService;
+import Service.ProductService;
 import Service.SaleService;
+import persistence.AccessoryRepository;
 
+/**
+ * Main interactive console UI for GameZone Unicesar.
+ * 
+ * @author Lead Developer
+ * @version 1.1
+ */
 public class ConsoleMenu {
-    private final AccessoryService accessoryService;
+    private final ProductService productService;
+    private final PersonService personService;
     private final SaleService saleService;
+    private final AccessoryService accessoryService;
+    private final ConsoleSubmenus accessorySubmenu;
     private final Scanner scanner;
 
-    public ConsoleMenu(AccessoryService accessoryService, SaleService saleService) {
-        this.accessoryService = accessoryService;
+    public ConsoleMenu(ProductService productService, PersonService personService, SaleService saleService) {
+        this.productService = productService;
+        this.personService = personService;
         this.saleService = saleService;
+        
+        // Se instancia el servicio con su respectivo repositorio
+        this.accessoryService = new AccessoryService(new AccessoryRepository());
+        this.accessorySubmenu = new ConsoleSubmenus(this.accessoryService);
         this.scanner = new Scanner(System.in);
     }
 
-    public void showAccessorySubMenu() {
+    public void start() {
         int option = -1;
         do {
             System.out.println("\n=================================");
-            System.out.println("     GESTIÓN DE ACCESORIOS       ");
+            System.out.println("   GAMEZONE UNICESAR - MAIN MENU ");
             System.out.println("=================================");
-            System.out.println("1. Listar todos los accesorios");
-            System.out.println("2. Filtrar por tipo (Controller, Cable, Memory)");
-            System.out.println("3. Buscar por compatibilidad de consola");
-            System.out.println("4. Consultar por ID");
-            System.out.println("5. Volver al menú principal");
-            System.out.print("Seleccione una opción: ");
+            System.out.println("1. Product Management");
+            System.out.println("2. Customer & Seller Management");
+            System.out.println("3. Sales Module");
+            System.out.println("4. Accessory Management");
+            System.out.println("0. Exit Application");
+            System.out.print("Select an option: ");
 
             if (scanner.hasNextInt()) {
                 option = scanner.nextInt();
-                scanner.nextLine(); // Limpiar búfer
+                scanner.nextLine();
 
                 switch (option) {
-                    case 1 -> {
-                        List<Accessory> list = accessoryService.listAllAccessories();
-                        if (list.isEmpty()) {
-                            System.out.println("No hay accesorios registrados.");
-                        } else {
-                            list.forEach(a -> System.out.println(a.getId() + " - " + a.getTitle() + " | Stock: " + a.getStock() + " | Price: $" + a.getPrice()));
-                        }
-                    }
-                    case 2 -> {
-                        System.out.print("Ingrese el tipo (Controller/Cable/Memory): ");
-                        String type = scanner.nextLine();
-                        List<Accessory> filtered = accessoryService.listAccessoriesByType(type);
-                        filtered.forEach(a -> System.out.println(a.getId() + " - " + a.getTitle()));
-                    }
-                    case 3 -> {
-                        System.out.print("Ingrese ID o nombre de la consola compatible: ");
-                        String console = scanner.nextLine();
-                        List<Accessory> compatible = accessoryService.findAccessoriesCompatibleWith(console);
-                        compatible.forEach(a -> System.out.println(a.getId() + " - " + a.getTitle()));
-                    }
-                    case 4 -> {
-                        System.out.print("Ingrese ID del accesorio: ");
-                        String id = scanner.nextLine();
-                        Accessory acc = accessoryService.findById(id);
-                        if (acc != null) {
-                            System.out.println("Encontrado: " + acc.getTitle() + " | Stock: " + acc.getStock());
-                        } else {
-                            System.out.println("Accesorio no encontrado.");
-                        }
-                    }
-                    case 5 -> System.out.println("Regresando al menú principal...");
-                    default -> System.out.println("Opción no válida.");
+                    case 1 -> showProductMenu();
+                    case 2 -> showPersonMenu();
+                    case 3 -> showSalesMenu();
+                    case 4 -> accessorySubmenu.showAccessoryMenu();
+                    case 0 -> System.out.println("\nThank you for using GameZone Unicesar. Goodbye!");
+                    default -> System.out.println("Invalid option. Please try again.");
                 }
             } else {
-                System.out.println("Entrada inválida. Ingrese un número.");
+                System.out.println("Error: Please enter a valid number.");
                 scanner.next();
             }
-        } while (option != 5);
+        } while (option != 0);
+    }
+
+    private void showProductMenu() {
+        System.out.println("\n--- PRODUCT MANAGEMENT ---");
+        System.out.println("1. List All Products (Games & Consoles)");
+        System.out.println("2. Manage Accessories Submenu");
+        System.out.println("0. Back to Main Menu");
+        System.out.print("Select an option: ");
+        
+        if (scanner.hasNextInt()) {
+            int subOpt = scanner.nextInt();
+            scanner.nextLine();
+            if (subOpt == 1) {
+                productService.getAllProducts().forEach(p -> 
+                    System.out.println("[" + p.getId() + "] " + p.getTitle() + " - $" + p.getPrice() + " (Stock: " + p.getStock() + ")")
+                );
+            } else if (subOpt == 2) {
+                accessorySubmenu.showAccessoryMenu();
+            }
+        }
+    }
+
+    private void showPersonMenu() {
+        System.out.println("\n--- CUSTOMER & SELLER MANAGEMENT ---");
+        personService.getAllPersons().forEach(p -> 
+            System.out.println("[" + p.getId() + "] " + p.getName() + " - " + p.getEmail())
+        );
+    }
+
+    private void showSalesMenu() {
+        System.out.println("\n--- SALES MODULE ---");
+        if (saleService.getAllSales().isEmpty()) {
+            System.out.println("No recorded sales yet.");
+        } else {
+            saleService.getAllSales().forEach(s -> 
+                System.out.println("Sale ID: " + s.getId()  + " | Total: $" + s.calculateTotal())
+            );
+        }
     }
 }
