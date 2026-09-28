@@ -127,4 +127,26 @@ public class Sale {
         }
         this.details = new ArrayList<>(details);
     }
+    /**
+     * Checks if the sale is eligible for return based on the 30-day policy.
+     * Calculates the difference between the sale date and the current date.
+     *
+     * @return true if the sale occurred within the last 30 calendar days, false otherwise
+     */
+    public boolean canBeReturned() {
+        if (this.date == null || this.date.trim().isEmpty()) {
+            return false;
+        }
+        try {
+            // Extracts only the date part (YYYY-MM-DD) in case it includes the time
+            String cleanDate = this.date.contains("T") ? this.date.split("T")[0] : this.date;
+            java.time.LocalDate saleDate = java.time.LocalDate.parse(cleanDate.trim());
+            java.time.LocalDate currentDate = java.time.LocalDate.now();
+            
+            long daysBetween = java.time.temporal.ChronoUnit.DAYS.between(saleDate, currentDate);
+            return daysBetween >= 0 && daysBetween <= 30;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }
