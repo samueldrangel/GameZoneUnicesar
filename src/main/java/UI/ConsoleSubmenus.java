@@ -7,183 +7,240 @@ package UI;
 import java.util.List;
 import java.util.Scanner;
 import Model.Accessory;
+import Model.Cable;
+import Model.Controller;
+import Model.Memory;
 import Service.AccessoryService;
 
 /**
- * Submenu class responsible for handling accessory management interactions in the console.
- * Integrates with AccessoryService for business operations.
+ * Submenu implementation for managing specific accessory subtypes and operations.
  * 
  * @author Lead Developer
- * @version 1.0
+ * @version 1.1
  */
 public class ConsoleSubmenus {
 
     private final AccessoryService accessoryService;
     private final Scanner scanner;
 
-    /**
-     * Initializes the accessory submenu with the required AccessoryService dependency.
-     * 
-     * @param accessoryService Injected instance of AccessoryService
-     */
     public ConsoleSubmenus(AccessoryService accessoryService) {
         this.accessoryService = accessoryService;
         this.scanner = new Scanner(System.in);
     }
 
-    /**
-     * Displays and manages the accessory options loop in the interactive console.
-     */
     public void showAccessoryMenu() {
         int option = -1;
         do {
-            System.out.println("\n=========================================");
-            System.out.println("      MÓDULO DE GESTIÓN DE ACCESORIOS   ");
-            System.out.println("=========================================");
-            System.out.println("1. Listar todos los accesorios");
-            System.out.println("2. Filtrar accesorios por tipo (Controller, Cable, Memory)");
-            System.out.println("3. Buscar por compatibilidad de consola");
-            System.out.println("4. Consultar accesorio por ID");
-            System.out.println("5. Registrar un nuevo accesorio");
-            System.out.println("6. Volver al menú principal");
-            System.out.print("Seleccione una opción: ");
+            System.out.println("\n---------------------------------");
+            System.out.println("      ACCESSORY MANAGEMENT       ");
+            System.out.println("---------------------------------");
+            System.out.println("1. List All Accessories");
+            System.out.println("2. Register Controller");
+            System.out.println("3. Register Cable");
+            System.out.println("4. Register Memory");
+            System.out.println("5. Filter Accessories by Type");
+            System.out.println("6. Find Compatible Accessories by Console");
+            System.out.println("7. Find Accessory by ID");
+            System.out.println("0. Back to Main Menu");
+            System.out.print("Select an option: ");
 
             if (scanner.hasNextInt()) {
                 option = scanner.nextInt();
-                scanner.nextLine(); // Limpiar el búfer
+                scanner.nextLine();
 
                 switch (option) {
-                    case 1 -> handleListAll();
-                    case 2 -> handleFilterByType();
-                    case 3 -> handleFilterByCompatibility();
-                    case 4 -> handleFindById();
-                    case 5 -> handleRegisterAccessory();
-                    case 6 -> System.out.println("Regresando al menú principal...");
-                    default -> System.out.println("Opción no válida. Intente de nuevo.");
+                    case 1 -> listAllAccessories();
+                    case 2 -> registerControllerMenu();
+                    case 3 -> registerCableMenu();
+                    case 4 -> registerMemoryMenu();
+                    case 5 -> filterByTypeMenu();
+                    case 6 -> findByCompatibilityMenu();
+                    case 7 -> findByIdMenu();
+                    case 0 -> System.out.println("Returning to main menu...");
+                    default -> System.out.println("Invalid option. Please try again.");
                 }
             } else {
-                System.out.println("Error: Por favor ingrese un número entero válido.");
-                scanner.next(); // Descartar entrada inválida
+                System.out.println("Error: Please enter a valid number.");
+                scanner.next();
             }
-        } while (option != 6);
+        } while (option != 0);
     }
 
-    private void handleListAll() {
-        System.out.println("\n--- Lista de Todos los Accesorios ---");
-        List<Accessory> accessories = accessoryService.listAllAccessories();
-        if (accessories.isEmpty()) {
-            System.out.println("No hay accesorios registrados en el inventario.");
+    private void listAllAccessories() {
+        System.out.println("\n--- ALL ACCESSORIES ---");
+        List<Accessory> list = accessoryService.listAllAccessories();
+        if (list.isEmpty()) {
+            System.out.println("No accessories currently registered.");
         } else {
-            accessories.forEach(a -> 
-                System.out.printf("ID: %-8s | Título: %-25s | Tipo: %-12s | Precio: $%-8.2f | Stock: %d%n",
-                        a.getId(), a.getTitle(), a.getType(), a.getPrice(), a.getStock())
-            );
+            list.forEach(this::displayAccessoryDetails);
         }
     }
 
-    private void handleFilterByType() {
-        System.out.print("\nIngrese el tipo a filtrar (e.g. Controller, Cable, Memory): ");
-        String type = scanner.nextLine();
-        List<Accessory> filtered = accessoryService.listAccessoriesByType(type);
-
-        if (filtered.isEmpty()) {
-            System.out.println("No se encontraron accesorios del tipo: " + type);
-        } else {
-            System.out.println("\n--- Accesorios del tipo '" + type + "' ---");
-            filtered.forEach(a -> 
-                System.out.printf("ID: %-8s | Título: %-25s | Precio: $%-8.2f | Stock: %d%n",
-                        a.getId(), a.getTitle(), a.getPrice(), a.getStock())
-            );
-        }
-    }
-
-    private void handleFilterByCompatibility() {
-        System.out.print("\nIngrese el nombre o ID de la consola (e.g. PS5, Xbox, Switch): ");
-        String consoleId = scanner.nextLine();
-        List<Accessory> compatible = accessoryService.findAccessoriesCompatibleWith(consoleId);
-
-        if (compatible.isEmpty()) {
-            System.out.println("No se encontraron accesorios compatibles con: " + consoleId);
-        } else {
-            System.out.println("\n--- Accesorios compatibles con '" + consoleId + "' ---");
-            compatible.forEach(a -> 
-                System.out.printf("ID: %-8s | Título: %-25s | Compatibilidad: %-15s | Stock: %d%n",
-                        a.getId(), a.getTitle(), a.getCompatibility(), a.getStock())
-            );
-        }
-    }
-
-    private void handleFindById() {
-        System.out.print("\nIngrese el ID del accesorio a buscar: ");
-        String id = scanner.nextLine();
-        Accessory accessory = accessoryService.findById(id);
-
-        if (accessory != null) {
-            System.out.println("\n--- Accesorio Encontrado ---");
-            System.out.println("ID:             " + accessory.getId());
-            System.out.println("Título:         " + accessory.getTitle());
-            System.out.println("Tipo:           " + accessory.getType());
-            System.out.println("Precio:         $" + accessory.getPrice());
-            System.out.println("Stock:          " + accessory.getStock());
-            System.out.println("Compatibilidad: " + accessory.getCompatibility());
-        } else {
-            System.out.println("Error: No existe ningún accesorio con el ID: " + id);
-        }
-    }
-
-    private void handleRegisterAccessory() {
-        System.out.println("\n--- Registrar Nuevo Accesorio ---");
-        System.out.println("1. Registrar Control (Controller)");
-        System.out.println("2. Registrar Cable");
-        System.out.println("3. Registrar Memoria (Memory)");
-        System.out.print("Seleccione la categoría: ");
-
-        if (scanner.hasNextInt()) {
-            int category = scanner.nextInt();
-            scanner.nextLine();
-
+    private void registerControllerMenu() {
+        System.out.println("\n--- REGISTER NEW CONTROLLER ---");
+        try {
             System.out.print("ID: ");
             String id = scanner.nextLine();
-            System.out.print("Título/Nombre: ");
+
+            System.out.print("Title: ");
             String title = scanner.nextLine();
-            System.out.print("Precio: ");
-            double price = scanner.nextDouble();
-            System.out.print("Stock inicial: ");
-            int stock = scanner.nextInt();
-            scanner.nextLine();
-            System.out.print("Compatibilidad: ");
+
+            System.out.print("Price: ");
+            double price = Double.parseDouble(scanner.nextLine());
+
+            System.out.print("Stock: ");
+            int stock = Integer.parseInt(scanner.nextLine());
+
+            System.out.print("Type (e.g., Gamepad, Arcade Stick): ");
+            String type = scanner.nextLine();
+
+            System.out.print("Compatibility (e.g., PS5, Xbox Series, PC): ");
             String compatibility = scanner.nextLine();
 
-            switch (category) {
-                case 1 -> {
-                    System.out.print("Tipo de conexión (e.g., Wireless/Bluetooth/USB): ");
-                    String connectionType = scanner.nextLine();
-                    accessoryService.registerController(id, title, price, stock, "Controller", compatibility, connectionType);
-                    System.out.println("¡Control registrado exitosamente!");
-                }
-                case 2 -> {
-                    System.out.print("Longitud en metros: ");
-                    double length = scanner.nextDouble();
-                    scanner.nextLine();
-                    System.out.print("Tipo de conector (e.g., HDMI 2.1 / USB-C): ");
-                    String connectorType = scanner.nextLine();
-                    accessoryService.registerCable(id, title, price, stock, "Cable", compatibility, length, connectorType);
-                    System.out.println("¡Cable registrado exitosamente!");
-                }
-                case 3 -> {
-                    System.out.print("Capacidad en GB: ");
-                    int capacityGb = scanner.nextInt();
-                    scanner.nextLine();
-                    System.out.print("Tipo de memoria (e.g., NVMe SSD / MicroSD): ");
-                    String memoryType = scanner.nextLine();
-                    accessoryService.registerMemory(id, title, price, stock, "Memory", compatibility, capacityGb, memoryType);
-                    System.out.println("¡Memoria registrada exitosamente!");
-                }
-                default -> System.out.println("Categoría no válida.");
-            }
-        } else {
-            System.out.println("Entrada no válida.");
-            scanner.next();
+            System.out.print("Connection Type (e.g., Wireless Bluetooth, USB-C): ");
+            String connectionType = scanner.nextLine();
+
+            Controller controller = accessoryService.registerController(id, title, price, stock, type, compatibility, connectionType);
+            System.out.println("Controller registered successfully with ID: " + controller.getId());
+
+        } catch (NumberFormatException e) {
+            System.out.println("Error: Price and stock must be valid numeric values.");
+        } catch (Exception e) {
+            System.out.println("Error registering controller: " + e.getMessage());
         }
+    }
+
+    private void registerCableMenu() {
+        System.out.println("\n--- REGISTER NEW CABLE ---");
+        try {
+            System.out.print("ID: ");
+            String id = scanner.nextLine();
+
+            System.out.print("Title: ");
+            String title = scanner.nextLine();
+
+            System.out.print("Price: ");
+            double price = Double.parseDouble(scanner.nextLine());
+
+            System.out.print("Stock: ");
+            int stock = Integer.parseInt(scanner.nextLine());
+
+            System.out.print("Type (e.g., HDMI 2.1, Power Cable): ");
+            String type = scanner.nextLine();
+
+            System.out.print("Compatibility (e.g., PS5, Switch): ");
+            String compatibility = scanner.nextLine();
+
+            System.out.print("Length in meters (e.g., 2.0): ");
+            double length = Double.parseDouble(scanner.nextLine());
+
+            System.out.print("Connector Type (e.g., HDMI to HDMI, USB-C): ");
+            String connectorType = scanner.nextLine();
+
+            Cable cable = accessoryService.registerCable(id, title, price, stock, type, compatibility, length, connectorType);
+            System.out.println("Cable registered successfully with ID: " + cable.getId());
+
+        } catch (NumberFormatException e) {
+            System.out.println("Error: Price, stock, and length must be valid numeric values.");
+        } catch (Exception e) {
+            System.out.println("Error registering cable: " + e.getMessage());
+        }
+    }
+
+    private void registerMemoryMenu() {
+        System.out.println("\n--- REGISTER NEW MEMORY ACCESSORY ---");
+        try {
+            System.out.print("ID: ");
+            String id = scanner.nextLine();
+
+            System.out.print("Title: ");
+            String title = scanner.nextLine();
+
+            System.out.print("Price: ");
+            double price = Double.parseDouble(scanner.nextLine());
+
+            System.out.print("Stock: ");
+            int stock = Integer.parseInt(scanner.nextLine());
+
+            System.out.print("Type (e.g., SSD Expansion, MicroSD): ");
+            String type = scanner.nextLine();
+
+            System.out.print("Compatibility (e.g., PS5, Switch): ");
+            String compatibility = scanner.nextLine();
+
+            System.out.print("Capacity in GB (e.g., 1024): ");
+            int capacityGb = Integer.parseInt(scanner.nextLine());
+
+            System.out.print("Memory Type (e.g., NVMe M.2, SDXC): ");
+            String memoryType = scanner.nextLine();
+
+            Memory memory = accessoryService.registerMemory(id, title, price, stock, type, compatibility, capacityGb, memoryType);
+            System.out.println("Memory registered successfully with ID: " + memory.getId());
+
+        } catch (NumberFormatException e) {
+            System.out.println("Error: Price, stock, and capacity must be valid numbers.");
+        } catch (Exception e) {
+            System.out.println("Error registering memory: " + e.getMessage());
+        }
+    }
+
+    private void filterByTypeMenu() {
+        System.out.print("\nEnter Accessory Type to filter (e.g. Controller, Cable, Memory): ");
+        String type = scanner.nextLine();
+
+        List<Accessory> filtered = accessoryService.listAccessoriesByType(type);
+        if (filtered.isEmpty()) {
+            System.out.println("No accessories found matching type: " + type);
+        } else {
+            System.out.println("\n--- ACCESSORIES OF TYPE: " + type + " ---");
+            filtered.forEach(this::displayAccessoryDetails);
+        }
+    }
+
+    private void findByCompatibilityMenu() {
+        System.out.print("\nEnter Console ID or Platform Name (e.g., PS5, Switch): ");
+        String consoleId = scanner.nextLine();
+
+        List<Accessory> compatible = accessoryService.findAccessoriesCompatibleWith(consoleId);
+        if (compatible.isEmpty()) {
+            System.out.println("No compatible accessories found for: " + consoleId);
+        } else {
+            System.out.println("\n--- COMPATIBLE ACCESSORIES FOR: " + consoleId + " ---");
+            compatible.forEach(this::displayAccessoryDetails);
+        }
+    }
+
+    private void findByIdMenu() {
+        System.out.print("\nEnter Accessory ID: ");
+        String id = scanner.nextLine();
+
+        Accessory acc = accessoryService.findById(id);
+        if (acc != null) {
+            System.out.println("\n--- ACCESSORY FOUND ---");
+            displayAccessoryDetails(acc);
+        } else {
+            System.out.println("Accessory not found with ID: " + id);
+        }
+    }
+
+    private void displayAccessoryDetails(Accessory a) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[").append(a.getId()).append("] ").append(a.getTitle())
+          .append(" | Price: $").append(a.getPrice())
+          .append(" | Stock: ").append(a.getStock())
+          .append(" | Type: ").append(a.getType())
+          .append(" | Compatibility: ").append(a.getCompatibility());
+
+        if (a instanceof Controller c) {
+            sb.append(" | Connection: ").append(c.getConnectionType());
+        } else if (a instanceof Cable cb) {
+            sb.append(" | Length: ").append(cb.getLength()).append("m")
+              .append(" | Connector: ").append(cb.getConnectorType());
+        } else if (a instanceof Memory m) {
+            sb.append(" | Capacity: ").append(m.getCapacityGb()).append("GB")
+              .append(" | Memory Type: ").append(m.getMemoryType());
+        }
+
+        System.out.println(sb.toString());
     }
 }
