@@ -5,17 +5,13 @@
 package Model;
 
 /**
- *
- * @author Samuel Angulo
- */
-/**
- * Represents an accessory product in the GameZone store.
+ * Represents an abstract accessory product in the GameZone store.
  * Extends the abstract base class Product.
  * 
- * @author Samuel Angulo
+ * @author Samuel Angulo Meza
  * @version 1.0
  */
-public class Accessory extends Product {
+public abstract class Accessory extends Product {
     private String type;
     private String compatibility;
 
