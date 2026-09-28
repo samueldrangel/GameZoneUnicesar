@@ -4,10 +4,7 @@
  */
 package Service;
 
-/**
- *
- * @author PC
- */
+import Model.Accessory;
 import Model.Customer;
 import Model.Product;
 import Model.Sale;
@@ -22,66 +19,77 @@ import java.util.List;
 /**
  * Service class responsible for managing sales business logic.
  * Orchestrates transaction validations, stock reduction, and sales persistence.
+ * Adaptada para soportar tanto Productos (Juegos/Consolas) como Accesorios.
  * 
  * @author Lead Developer
- * @version 1.0
+ * @version 1.1
  */
-public class SalesService {
+public class SaleService {
 
     private final SaleRepository saleRepository;
     private final ProductService productService;
+    private final AccessoryService accessoryService; // Adicionado para accesorios
     private final List<Sale> sales;
 
     /**
-     * Initializes SalesService with required repository and product service dependencies.
+     * Initializes SaleService with required repositories and services.
      * 
-     * @param productService Instance of ProductService to handle stock updates
+     * @param productService Instance of ProductService to handle product stock updates
+     * @param accessoryService Instance of AccessoryService to handle accessory stock updates
      */
-    public SalesService(ProductService productService) {
+    public SaleService(ProductService productService, AccessoryService accessoryService) {
         this.saleRepository = new SaleRepository();
         this.productService = productService;
+        this.accessoryService = accessoryService;
         this.sales = new ArrayList<>();
     }
 
     /**
      * Registers a new sale transaction in the system.
-     * Validates business rules: minimum one product, stock availability, and updates inventory.
+     * Validates business rules: minimum one item, stock availability, and updates inventory.
      * 
      * @param saleId   Unique transaction ID
      * @param customer Purchasing Customer
      * @param seller   Processing Seller
      * @param details  List of line items
      * @return Processed Sale instance
-     * @throws IllegalArgumentException if validation rules fail (empty items or stock shortage)
+     * @throws IllegalArgumentException if validation rules fail
      */
     public Sale processSale(String saleId, Customer customer, Seller seller, List<SaleDetail> details) {
         // Validation Rule 1: Sale must contain at least one product line item
         if (details == null || details.isEmpty()) {
-            throw new IllegalArgumentException("Validation Error: A sale must contain at least one product.");
+            throw new IllegalArgumentException("Validation Error: A sale must contain at least one item.");
         }
 
         if (customer == null || seller == null) {
             throw new IllegalArgumentException("Validation Error: Customer and Seller are required to process a sale.");
         }
 
-        // Validation Rule 2: Verify stock availability for all products in the sale
+        // Validation Rule 2: Verify stock availability for all products/accessories in the sale
         for (SaleDetail detail : details) {
-            Product product = detail.getProduct();
+            Product item = detail.getProduct();
             int requestedQty = detail.getQuantity();
 
-            if (product.getStock() < requestedQty) {
+            if (item.getStock() < requestedQty) {
                 throw new IllegalArgumentException(String.format(
-                        "Stock Error: Insufficient stock for product '%s'. Available: %d, Requested: %d",
-                        product.getTitle(), product.getStock(), requestedQty
+                        "Stock Error: Insufficient stock for item '%s'. Available: %d, Requested: %d",
+                        item.getTitle(), item.getStock(), requestedQty
                 ));
             }
         }
 
-        // Action: Deduct stock from products and update inventory persistence (Point 8 in analysis)
+        // Action: Deduct stock and update inventory persistence according to item type
         for (SaleDetail detail : details) {
-            Product product = detail.getProduct();
-            int newStock = product.getStock() - detail.getQuantity();
-            productService.updateStock(product.getId(), newStock);
+            Product item = detail.getProduct();
+            int newStock = item.getStock() - detail.getQuantity();
+            
+            // Si el item es un Accesorio, actualiza a través de AccessoryService (accessories.csv)
+            if (item instanceof Accessory) {
+                accessoryService.updateStock(item.getId(), newStock);
+            } else {
+                // Si es un Producto regular, actualiza mediante ProductService (products.csv)
+                productService.updateStock(item.getId(), newStock);
+            }
         }
 
         // Create and register sale transaction
