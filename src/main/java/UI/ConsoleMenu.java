@@ -12,9 +12,9 @@ import Service.SaleService;
 import persistence.AccessoryRepository;
 
 /**
- * Main interactive console UI for GameZone Unicesar.
+ * Interfaz de consola interactiva principal para GameZone Unicesar.
  * 
- * @author Lead Developer
+ * @author Desarrollador Principal
  * @version 1.1
  */
 public class ConsoleMenu {
@@ -40,14 +40,14 @@ public class ConsoleMenu {
         int option = -1;
         do {
             System.out.println("\n=================================");
-            System.out.println("   GAMEZONE UNICESAR - MAIN MENU ");
+            System.out.println("   GAMEZONE UNICESAR - MENÚ PRINCIPAL ");
             System.out.println("=================================");
-            System.out.println("1. Product Management");
-            System.out.println("2. Customer & Seller Management");
-            System.out.println("3. Sales Module");
-            System.out.println("4. Accessory Management");
-            System.out.println("0. Exit Application");
-            System.out.print("Select an option: ");
+            System.out.println("1. Gestión de Productos");
+            System.out.println("2. Gestión de Clientes y Vendedores");
+            System.out.println("3. Módulo de Ventas");
+            System.out.println("4. Gestión de Accesorios");
+            System.out.println("0. Salir de la Aplicación");
+            System.out.print("Seleccione una opción: ");
 
             if (scanner.hasNextInt()) {
                 option = scanner.nextInt();
@@ -58,29 +58,29 @@ public class ConsoleMenu {
                     case 2 -> showPersonMenu();
                     case 3 -> showSalesMenu();
                     case 4 -> accessorySubmenu.showAccessoryMenu();
-                    case 0 -> System.out.println("\nThank you for using GameZone Unicesar. Goodbye!");
-                    default -> System.out.println("Invalid option. Please try again.");
+                    case 0 -> System.out.println("\n¡Gracias por usar GameZone Unicesar. Hasta luego!");
+                    default -> System.out.println("Opción inválida. Por favor, intente de nuevo.");
                 }
             } else {
-                System.out.println("Error: Please enter a valid number.");
+                System.out.println("Error: Por favor, ingrese un número válido.");
                 scanner.next();
             }
         } while (option != 0);
     }
 
     private void showProductMenu() {
-        System.out.println("\n--- PRODUCT MANAGEMENT ---");
-        System.out.println("1. List All Products (Games & Consoles)");
-        System.out.println("2. Manage Accessories Submenu");
-        System.out.println("0. Back to Main Menu");
-        System.out.print("Select an option: ");
+        System.out.println("\n--- GESTIÓN DE PRODUCTOS ---");
+        System.out.println("1. Listar todos los productos (Juegos y Consolas)");
+        System.out.println("2. Submenú de Gestión de Accesorios");
+        System.out.println("0. Volver al Menú Principal");
+        System.out.print("Seleccione una opción: ");
         
         if (scanner.hasNextInt()) {
             int subOpt = scanner.nextInt();
             scanner.nextLine();
             if (subOpt == 1) {
                 productService.getAllProducts().forEach(p -> 
-                    System.out.println("[" + p.getId() + "] " + p.getTitle() + " - $" + p.getPrice() + " (Stock: " + p.getStock() + ")")
+                    System.out.println("[" + p.getId() + "] " + p.getTitle() + " - $" + p.getPrice() + " (Inventario: " + p.getStock() + ")")
                 );
             } else if (subOpt == 2) {
                 accessorySubmenu.showAccessoryMenu();
@@ -89,19 +89,19 @@ public class ConsoleMenu {
     }
 
     private void showPersonMenu() {
-        System.out.println("\n--- CUSTOMER & SELLER MANAGEMENT ---");
+        System.out.println("\n--- GESTIÓN DE CLIENTES Y VENDEDORES ---");
         personService.getAllPersons().forEach(p -> 
             System.out.println("[" + p.getId() + "] " + p.getName() + " - " + p.getEmail())
         );
     }
 
     private void showSalesMenu() {
-        System.out.println("\n--- SALES MODULE ---");
+        System.out.println("\n--- MÓDULO DE VENTAS ---");
         if (saleService.getAllSales().isEmpty()) {
-            System.out.println("No recorded sales yet.");
+            System.out.println("Aún no hay ventas registradas.");
         } else {
             saleService.getAllSales().forEach(s -> 
-                System.out.println("Sale ID: " + s.getId()  + " | Total: $" + s.calculateTotal())
+                System.out.println("ID Venta: " + s.getId() + " | Total: $" + s.calculateTotal())
             );
         }
     }
